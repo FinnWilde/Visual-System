@@ -151,11 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="harmonic_oscillator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="rk4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="graphics.hpp" />
     <ClInclude Include="harmonic_oscillator.hpp" />
     <ClInclude Include="rk4.hpp" />
   </ItemGroup>
