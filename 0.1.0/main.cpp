@@ -13,8 +13,8 @@ int main() {
 
     double t = 0;
     double h = 0.1;
-    harmonicOscillator inputSystem(2.0, 5.0, 3.0); //system params , m,c,k
-    Eigen::Vector2d state(5, -50); //initial conditions x0, v0
+    harmonicOscillator inputSystem(2.0, 1.0, 3.0); //system params , m,c,k
+    Eigen::Vector2d state(5, 0); //initial conditions x0, v0
     double simTime = 20;
 
     int instances = static_cast<int>(simTime / h) + 1; //total number of data points (ensures an integer output)
@@ -43,7 +43,7 @@ int main() {
     std::cout << "xMax: " << xMax
         << ", xMin " << xMin << std::endl;
 
-    initWindow(xMax,xMin,instances);
+    renderGraphics(xMax,xMin,instances,simTime,outputData);
 
     return 0;
 }
