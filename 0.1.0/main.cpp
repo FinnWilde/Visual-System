@@ -4,54 +4,54 @@
 #include <vector>
 #include <cmath>
 
-using namespace Eigen;
+using Eigen::Vector2d;
 
-class HarmonicOscillator {
+class harmonicOscillator { //this class represents any oscillator of form ax..+bx.+cx=0
+
 public:
-    HarmonicOscillator(double mass, double damping, double stiffness)
+
+    double m, c, k; //members of the class - every instant of the class will have these parameters
+
+    harmonicOscillator(double mass, double damping, double stiffness) //constructor
         : m(mass), c(damping), k(stiffness) {}
 
-    Vector2d ode(const Vector2d& state) const {
-        double x = state[0];
-        double v = state[1];
-        return Vector2d(v, (-c * v - k * x) / m); //row 0 = dx/dt, row 1 = dv/dt
-    }
 
-    Vector2d rk4(double h, const Vector2d& state) const {
-        Vector2d k1 = ode(state);
-        Vector2d k2 = ode(state + (h / 2) * k1);
-        Vector2d k3 = ode(state + (h / 2) * k2);
-        Vector2d k4 = ode(state + h * k3);
-        return state + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+    Vector2d evaluate(Vector2d state) const { //const to ensure function does not change members
+        return Vector2d(state[1], (-c * state[1] - k * state[0]) / m); //rearranges 2nd order ODE into two first order ODEs. Row 0 = dx/dt, row 1 = dv/dt
     }
-
-private:
-    double m; // Mass
-    double c; // Damping coefficient
-    double k; // Stiffness
 };
 
+Vector2d rk4_step(harmonicOscillator& inputSystem, Vector2d state, double h)
+{
+    Vector2d k1 = inputSystem.evaluate(state);
+    Vector2d k2 = inputSystem.evaluate(state + h * k1 / 2);
+    Vector2d k3 = inputSystem.evaluate(state + h * k2 / 2);
+    Vector2d k4 = inputSystem.evaluate(state + h * k3);
+
+    return state + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+}
+
+
 int main() {
+
     double t = 0;
-    double h = 0.01;
-    Vector2d state(2, 0); // Initial state: [x0, v0]
+    double h = 0.1;
+    harmonicOscillator inputSystem(2.0, 5.0, 3.0); //system params , m,c,k
+    Vector2d state(1, 0); //initial conditions x0, v0
+    double simTime = 20;
 
-    // Initialize oscillator with constants
-    HarmonicOscillator oscillator(2.0, 0, 3.0);
+    for (int i = 0; i < simTime / h + 1; i++) {
 
-    // First step
-    t += h;
-    state = oscillator.rk4(h, state);
-    std::cout << "Time (t): " << t << ", Position (x): " << state[0]
-        << ", Velocity (v): " << state[1] << std::endl;
-
-    // Subsequent steps
-    for (int i = 0; i < 2000; i++) {
-        t += h;
-        state = oscillator.rk4(h, state);
-        std::cout << "Time (t): " << t << ", Position (x): " << state[0]
+        std::cout << "Time (t): " << t
+            << ", Position (x): " << state[0]
             << ", Velocity (v): " << state[1] << std::endl;
+
+        state = rk4_step(inputSystem, state, h);
+
+        t += h;
     }
+
 
     return 0;
 }
+
