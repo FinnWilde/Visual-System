@@ -12,9 +12,9 @@
 int main() {
 
     double t = 0;
-    double h = 0.1;
-    harmonicOscillator inputSystem(2.0, 1.0, 3.0); //system params , m,c,k
-    Eigen::Vector2d state(5, 0); //initial conditions x0, v0
+    double h = 0.01;
+    harmonicOscillator inputSystem(2.0,3.0,5.0); //system params ->  m - mass (kg) | c - damping (kg/s) | k - stiffness (kg/s^2)  
+    Eigen::Vector2d state(1, 5); //initial conditions -> x0 | v0
     double simTime = 20;
 
     int instances = static_cast<int>(simTime / h) + 1; //total number of data points (ensures an integer output)
@@ -24,10 +24,11 @@ int main() {
  
     for (int i = 0; i < instances; i++) {
 
+        /*
         std::cout << "Time (t): " << t
             << ", Position (x): " << state[0]
             << ", Velocity (v): " << state[1] << std::endl;
-
+        */
         outputData(i, 0) = t;
         outputData(i, 1) = state[0];
         outputData(i, 2) = state[1];
