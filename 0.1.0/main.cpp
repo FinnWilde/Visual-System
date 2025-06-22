@@ -13,9 +13,9 @@ int main() {
 
     double t = 0;
     double h = 0.01;
-    harmonicOscillator inputSystem(2.0,3.0,5.0); //system params ->  m - mass (kg) | c - damping (kg/s) | k - stiffness (kg/s^2)  
-    Eigen::Vector2d state(1, 5); //initial conditions -> x0 | v0
-    double simTime = 20;
+    harmonicOscillator inputSystem(1.0, 1.0, 4.0); //system params ->  m - mass (kg) | c - damping (kg/s) | k - stiffness (kg/s^2)  
+    Eigen::Vector2d state(-100, -100); //initial conditions -> x0 | v0
+    double simTime = 10;
 
     int instances = static_cast<int>(simTime / h) + 1; //total number of data points (ensures an integer output)
     Eigen::MatrixXd outputData(instances, 3); //matrix to store output data
