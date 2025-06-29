@@ -11,13 +11,21 @@
 
 int main() {
 
-    double t = 0;
-    double h = 0.01;
-    harmonicOscillator inputSystem(1.0, 5.0, 2.0); //system params ->  m - mass (kg) | c - damping (kg/s) | k - stiffness (kg/s^2)  
-    Eigen::Vector2d state(5, 0); //initial conditions -> x0 | v0
-    double simTime = 10;
+    int instances = 5000;//number of steps, higher steps -> higher quality, but longer load time
+    double t = 0; //start time
+    
+    auto xDotDotFunction = [](double t) {  return 1;  };
+    auto xDotFunction = [](double t) {  return (- 2 )/ (50 - 2 * t);  };
+    auto xFunction = [](double t) { return 0; };
+    auto inputFunction = [](double t) { return 1000/(50-2*t); };
+    auto reference = [](double t) {return 3; };
 
-    int instances = static_cast<int>(simTime / h) + 1; //total number of data points (ensures an integer output)
+    harmonicOscillator inputSystem(xDotDotFunction, xDotFunction, xFunction, inputFunction); //system params ->  m - mass (kg) | c - damping (kg/s) | k - stiffness (kg/s^2)  | u - input (N)  
+    Eigen::Vector2d state(0, 0); //initial conditions -> x0 | v0
+
+    double simTime = 20;
+    double h = simTime/instances; //step size (s)
+
     Eigen::MatrixXd outputData(instances, 3); //matrix to store output data
     double xMax = state[0];
     double xMin = state[0];
@@ -33,7 +41,7 @@ int main() {
         outputData(i, 1) = state[0];
         outputData(i, 2) = state[1];
 
-        state = rk4_step(inputSystem, state, h);
+        state = rk4_step(inputSystem, state, h, t);
 
         if (state[0] > xMax) xMax = state[0];
         if (state[0] < xMin) xMin = state[0];

@@ -14,7 +14,7 @@ int renderGraphics(double xMax, double xMin, double instances, double tMax, Eige
     float gridlineLength = 10.f;
 
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 16; // Try 4 or 8 for good quality
+    settings.antialiasingLevel = 8; // Try 4 or 8 for good quality
     sf::RenderWindow window(sf::VideoMode(windowFrame.x,windowFrame.y), "Anti-Aliased Window", sf::Style::Default, settings);
     
     sf::Font sansRoman;
@@ -74,12 +74,12 @@ int renderGraphics(double xMax, double xMin, double instances, double tMax, Eige
     sf::Text xLabel("t", italic, 28);
     setOriginToCentre(xLabel);
     xLabel.setFillColor(sf::Color::White);
-    xLabel.setPosition(margin.x + graphFrame.x + 15, xAxisHeight - axisWidth / 2);
+    xLabel.setPosition(margin.x + graphFrame.x + 15, xAxisHeight - axisWidth / 2  - 15);
 
     sf::Text yLabel("x", italic, 28);
     setOriginToCentre(yLabel);
     yLabel.setFillColor(sf::Color::White);
-    yLabel.setPosition(margin.x, margin.y - 15);
+    yLabel.setPosition(margin.x + 15, margin.y - 15);
 
     sf::Text zero("0", sansRoman, 16);
     setOriginToCentre(zero);
@@ -129,10 +129,13 @@ int renderGraphics(double xMax, double xMin, double instances, double tMax, Eige
         drawGridlines(window, gridlineLength / 2, axisWidth, margin.x, xAxisHeight, 0.f, graphFrame.y / (gridDivisionsAbove - gridDivisionsBelow), std::abs(gridDivisionsBelow)); //horizontal (below xAxis)
         drawGridlines(window, axisWidth, gridlineLength, margin.x - axisWidth / 2, xAxisHeight - gridlineLength / 2, graphFrame.x / gridDivisionsRight, 0.f, gridDivisionsRight); //vertical
 
+        
+
         drawXLabels(window, sansRoman, margin.x, xAxisHeight + gridlineLength / 2, 2 * graphFrame.x / (gridDivisionsRight), std::floor(gridDivisionsRight / 2), xScale); //horizontal (above xAxis)
         drawYLabels(window, sansRoman, margin.x, xAxisHeight, -2 * graphFrame.y / (gridDivisionsAbove - gridDivisionsBelow), std::floor(gridDivisionsAbove / 2), yScale, 1); //horizontal (above xAxis)
         drawYLabels(window, sansRoman, margin.x, xAxisHeight, 2 * graphFrame.y / (gridDivisionsAbove - gridDivisionsBelow), std::abs(std::ceil(gridDivisionsBelow / 2)), yScale, -1); //horizontal (above xAxis)
       
+
 
         window.display();
     }
