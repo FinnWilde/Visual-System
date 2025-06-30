@@ -5,9 +5,12 @@
 
 class harmonicOscillator {
 public:
-	std::function<double(double)>m, c, k, u;
+	std::function<double(double)> a;
+	std::function<double(double, double, double)> b;
+	std::function<double(double, double, double, double)> u;
+	
 
-	harmonicOscillator(std::function<double(double)> massFunc, std::function<double(double)> dampingFunc, std::function<double(double)> stiffnessFunc, std::function<double(double)> inputFunc);
+	harmonicOscillator(std::function<double(double)> xDotDotFunc, std::function<double(double, double, double)> plantFunc, std::function<double(double, double, double, double)> inputFunc);
 
-	Eigen::Vector2d evaluate(Eigen::Vector2d state, double t) const;
+	Eigen::Vector3d evaluate(Eigen::Vector3d state, Eigen::Vector2d reference, double t) const;
 };
