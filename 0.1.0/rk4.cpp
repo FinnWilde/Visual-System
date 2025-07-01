@@ -10,5 +10,6 @@ Vector3d rk4_step(harmonicOscillator& inputSystem, Vector3d& state, Vector2d& re
     return state + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
 }
 
-//uses Runge-Kutta 4 to approximate v and crucially x a step (h) in time later than the last values of v and x.
-//recall state is a 2d vector containing (x,v)
+//uses Runge-Kutta 4 to approximate v, I and crucially x a step (h) in time later than the last values of v, I and x.
+//recall state is a 3d vector containing (x, v, I)
+//reference is a 2d vector containing (r, rDot)

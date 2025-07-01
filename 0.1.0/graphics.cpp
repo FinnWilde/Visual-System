@@ -96,13 +96,22 @@ int renderGraphics(double xMax, double xMin, double instances, double tMax, Eige
     float yMaxGraph = gridDivisionsAbove * yScale;
     float yMinGraph = gridDivisionsBelow * yScale;
 
-    sf::VertexArray graphLine(sf::LineStrip, instances);
+    sf::VertexArray outputLine(sf::LineStrip, instances);
     for (int i = 0; i < instances; i++) {
         //                               Ratio                   Offset
         float x = ((graphFrame.x) * (outputData(i,0) / tMax)) + margin.x;
         float y = ((graphFrame.y) * ((yMaxGraph - outputData(i, 1)) / (yMaxGraph - yMinGraph))) + margin.y;
-        graphLine[i].position = sf::Vector2f(x, y);
-        graphLine[i].color = sf::Color(90, 224, 94);
+        outputLine[i].position = sf::Vector2f(x, y);
+        outputLine[i].color = sf::Color(90, 224, 94);
+    }
+
+    sf::VertexArray referenceLine(sf::LineStrip, instances);
+    for (int i = 0; i < instances; i++) {
+        //                               Ratio                   Offset
+        float x = ((graphFrame.x) * (outputData(i, 0) / tMax)) + margin.x;
+        float y = ((graphFrame.y) * ((yMaxGraph - outputData(i, 3)) / (yMaxGraph - yMinGraph))) + margin.y;
+        referenceLine[i].position = sf::Vector2f(x, y);
+        referenceLine[i].color = sf::Color(66, 135, 245);
     }
 
     while (window.isOpen())
@@ -116,7 +125,8 @@ int renderGraphics(double xMax, double xMin, double instances, double tMax, Eige
 
         window.clear(sf::Color(33, 33, 33));
 
-        window.draw(graphLine);
+        window.draw(outputLine);
+        window.draw(referenceLine);
       
         window.draw(xAxis);
         window.draw(yAxis);
@@ -187,7 +197,7 @@ void drawGridlines(sf::RenderWindow& window, float xLength, float yLength, float
 void drawXLabels(sf::RenderWindow& window, sf::Font font, float xPosition, float yPosition, float xStep, float numOfLabels, float scale) {
     for (int i = 1; i <= numOfLabels; i++) {
         std::ostringstream oss;
-        oss << std::setprecision(2) << 2 * i * scale;
+        oss << std::setprecision(3) << 2 * i * scale;
         sf::Text label(oss.str(), font, 16);
 
    
@@ -206,7 +216,7 @@ void drawXLabels(sf::RenderWindow& window, sf::Font font, float xPosition, float
 void drawYLabels(sf::RenderWindow& window, sf::Font font, float xPosition, float yPosition, float yStep, float numOfLabels, float scale, float multiplyer) {
     for (int i = 1; i <= numOfLabels; i++) {
         std::ostringstream oss;
-        oss << std::setprecision(1) << 2 * i * scale * multiplyer;
+        oss << std::setprecision(3) << 2 * i * scale * multiplyer;
         sf::Text label(oss.str(), font, 16);
         
         sf::FloatRect textBounds = label.getLocalBounds();

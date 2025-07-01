@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+constexpr double PI = 3.14159265358979323846;
 
 
 int main() {
@@ -16,49 +17,53 @@ int main() {
     
     //Plant (not compatable with any functions of xDotDot yet...)
     auto xDotDotFunction = [](double t) {  return 2;  };
-    auto plantFunction = [](double t, double xDot, double x) { return 0.1*xDot + 9.81*std::sin(x); };
+    auto plantFunction = [](double t, double xDot, double x) { return 3 * xDot + 5 * x; };
 
-    auto inputFunction = [](double t, double eDot, double e, double E) { 
-        
-        double Kp = 60, Ki = 5, Kd = 25;
+    
+    auto controllerFunction = [](double e, double eDot, double E) {
+        double Kp = 0, Ki = 0, Kd = 0;
+
+        double input = Kp * e + Ki * E + Kd * eDot;
+
         double maxInput = 50, minInput = -50;
-        double input = Kp * e + Ki * E + Kd * eDot; 
-        if (input > maxInput) {
-            input = maxInput;
-        }
-        else if (input < minInput) {
-            input = minInput;
-        }
-        
-        std::cout << "input: " << input << std::endl;
+        if (input > maxInput) input = maxInput;
+        if (input < minInput) input = minInput;
+        //std::cout << "e: " << e << ", eDot: " << eDot << ", E: " << E << " => input: " << input << std::endl;
+        //std::cout << input << std::endl;
         return input;
-        
     };
+    auto disturbanceFunction = [](double t) { return 0; };
+    auto inputFunction = [&controllerFunction, &disturbanceFunction](double t, double e, double eDot, double E) { return controllerFunction(e, eDot, E) + disturbanceFunction(t); };
 
-    auto referenceFunction = [](double t) {return 3; };
-    auto referenceDotFunction = [](double t) {return 0; };
+    auto referenceFunction = [](double t) {return  0; };
+    auto referenceDotFunction = [](double t) {return 0; }; //add solver here
 
-    harmonicOscillator inputSystem(xDotDotFunction, plantFunction, inputFunction); //system params ->  m - mass (kg) | c - damping (kg/s) | k - stiffness (kg/s^2)  | u - input (N)  
-    Eigen::Vector3d state(3.1415, 50, 0); //initial conditions -> x0 | v0 | E  
-    Eigen::Vector2d referenceState(referenceFunction(0), referenceDotFunction(0));
+    harmonicOscillator inputSystem(xDotDotFunction, plantFunction, inputFunction); //system params 
+    Eigen::Vector3d state(501.65, 0, 0); //initial conditions -> x0 | v0 | E  
+    Eigen::Vector2d referenceState(referenceFunction(0), referenceDotFunction(0)); //initial reference -> r | rDot
 
-    double simTime = 60;
+    double simTime = 20;
     double h = simTime/instances; //step size (s)
 
-    Eigen::MatrixXd outputData(instances, 3); //matrix to store output data
+    Eigen::MatrixXd outputData(instances + 1, 4); //matrix to store output data
     double xMax = state[0];
     double xMin = state[0];
  
-    for (int i = 0; i < instances; i++) {
+    for (int i = 0; i <= instances ; i++) {
 
-        
-        std::cout << "Time (t): " << t
+        if (i == instances) {
+            
+            std::cout << "Time (t): " << t
             << ", Position (x): " << state[0]
             << ", Velocity (v): " << state[1] << std::endl;
+        
+
+        }
         
         outputData(i, 0) = t;
         outputData(i, 1) = state[0];
         outputData(i, 2) = state[1];
+        outputData(i, 3) = referenceState[0];
 
 
         state = rk4_step(inputSystem, state, referenceState, h, t);
@@ -68,8 +73,11 @@ int main() {
 
         t += h;
 
-        referenceState(0) = referenceFunction(t);
-        referenceState(1) = referenceDotFunction(t);
+        referenceState[0] = referenceFunction(t);
+        referenceState[1] = referenceDotFunction(t);
+
+        if (referenceState[0] > xMax) xMax = referenceState[0];
+        if (referenceState[0] < xMin) xMin = referenceState[0];
     }
 
     std::cout << "xMax: " << xMax
