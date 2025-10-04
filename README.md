@@ -5,7 +5,7 @@ In its current version, Visual System is simply a second order ODE solver and gr
 Enter any second order ODE in form:
 $a(t)\ddot{x} + b(t, x, \dot{x}) = u(t)$
 
-The program is also set up to accept a plant function, reference function, $k_p$, $k_i$ and $k_d$ values for PID control. The reference line will be displayed in blue, with the feedback line displayed in green. 
+The program is also set up to accept a plant function, reference function, $K_p$, $K_i$ and $K_d$ values for PID control. The reference line will be displayed in blue, with the feedback line displayed in green. 
 
 ## Examples:
 
@@ -107,7 +107,7 @@ which can be input into the rk4 solver, along with initial state vector $y_0 = \
 
 <br>
 
-For PID controlled responses, $u(t) = k_pe(t) + k_iE(t) + k_d\dot{e}(t)$
+For PID controlled responses, $u(t) = K_pe(t) + K_iE(t) + K_d\dot{e}(t)$
 
 where:
 
